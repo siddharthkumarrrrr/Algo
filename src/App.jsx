@@ -38,7 +38,7 @@ function App() {
         setErrorMessage('Error: Please try again.');
       }
     } catch (error) {
-      setErrorMessage('Error submitting email and Discord ID.');
+      setErrorMessage('Enter Registerd Email or may be You are registerd.');
     }
   };
 
