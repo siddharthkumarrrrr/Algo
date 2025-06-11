@@ -23,7 +23,7 @@ function App() {
     
     try {
          
-      const response = await fetch('https://algo-hvwv.onrender.com/check-user', {
+      const response = await fetch('https://algo-2lov.onrender.com/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, discordId }),
@@ -51,7 +51,7 @@ function App() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://algo-hvwv.onrender.com/verify-otp', {
+      const response = await fetch('https://algo-2lov.onrender.com/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, discordId }),
