@@ -19,9 +19,10 @@ function App() {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-
+     console.log("hii");
     try {
-      const response = await fetch('https://algo-2-466c.onrender.com//check-user', {
+         
+      const response = await fetch('https://algo-2-466c.onrender.com/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, discordId }),
@@ -34,11 +35,11 @@ function App() {
         setShowInstructions(false); 
       } else if (data.message === 'Discord ID already linked.') {
         setErrorMessage('Discord ID already linked.');
-      } else {
-        setErrorMessage('Error: Please try again.');
+      } else if(data.message==='User not found') {
+        setErrorMessage('Enter Registerd Email.');
       }
     } catch (error) {
-      setErrorMessage('Enter Registerd Email or may be You are registerd.');
+      setErrorMessage('Backen issue.');
     }
   };
 
