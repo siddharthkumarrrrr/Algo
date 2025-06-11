@@ -41,7 +41,7 @@ app.post('/check-user', async (req, res) => {
   if (!email || !discordId) {
     return res.status(400).json({ message: 'Email and Discord ID are required' });
   }
- console.log("hii");
+ 
   try {
     const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
 
