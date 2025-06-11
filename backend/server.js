@@ -21,12 +21,26 @@ app.use(bodyParser.json());
 const dbClient = new Client({
   connectionString: process.env.DB_CONNECTION_STRING,
   ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 5000, // 5 seconds timeout for connection
 });
 
-// Connect to the database
+// Connect to the database with error handling
 dbClient.connect()
   .then(() => console.log('Connected to PostgreSQL database'))
-  .catch((err) => console.error('Database connection error', err));
+  .catch((err) => {
+    console.error('Database connection error:', err);
+    // Optionally, you can retry the connection or handle the error more gracefully
+    setTimeout(() => {
+      console.log('Retrying database connection...');
+      dbClient.connect();
+    }, 5000); // Retry connection after 5 seconds
+  });
+
+// Handling errors during runtime (e.g., unexpected disconnect)
+dbClient.on('error', (err) => {
+  console.error('Database error:', err);
+  // Here, you can add reconnection logic or shutdown the app gracefully
+});
 
 // Nodemailer setup for sending OTP
 const transporter = nodemailer.createTransport({
