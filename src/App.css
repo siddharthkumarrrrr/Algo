@@ -1,0 +1,150 @@
+/* Global reset and layout styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3); /* Gradient background */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; /* Align form and image side by side */
+}
+
+/* Main App container styling */
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%; /* Take up 70% of the screen width */
+  height: 90%; /* Height of 90% of the screen */
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px; /* Rounded corners for the whole form */
+  box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  position: relative;
+}
+
+/* Headings */
+h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for the heading */
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px; /* Max width for the form */
+  padding: 30px;
+  background-color: #ffffff; /* White background for the form */
+  border-radius: 12px;
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition: all 0.3s ease;
+}
+
+form:hover {
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.15); /* Shadow on form hover */
+}
+
+/* Styling for form inputs */
+input, button {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Input fields focused state */
+input:focus {
+  outline: none;
+  border: 1px solid #4CAF50; /* Green border when input is focused */
+  box-shadow: 0px 0px 10px rgba(76, 175, 80, 0.3); /* Green shadow on focus */
+}
+
+/* Button Styling */
+button {
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.05); /* Slight button enlargement on hover */
+}
+
+button:active {
+  background-color: #388e3c;
+  transform: scale(1); /* Button returns to original size */
+}
+
+/* Error message styling */
+p {
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Black section (right side) styling */
+.black-section {
+  width: 50%; /* Half the screen width */
+  height: 100vh; /* Full viewport height */
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #333; /* Dark background for the image section */
+}
+
+.black-section img {
+  width: 80%;
+  height: auto;
+  object-fit: cover; /* Ensure the image covers the section without distortion */
+  border-radius: 12px; /* Rounded corners for the image section */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App {
+    width: 90%; /* Allow more space on smaller screens */
+    flex-direction: column; /* Stack the form and image vertically */
+  }
+
+  .black-section {
+    width: 100%; /* Full width for the image section on mobile */
+    height: 300px; /* Reduced height for the image on small screens */
+  }
+
+  .black-section img {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  h1 {
+    font-size: 2rem; /* Smaller heading on mobile */
+  }
+
+  form {
+    padding: 20px;
+    width: 90%; /* Wider form on smaller screens */
+  }
+}
