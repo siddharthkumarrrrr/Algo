@@ -21,7 +21,7 @@ function App() {
     setErrorMessage('');
 
     try {
-      const response = await fetch('http://localhost:3000/check-user', {
+      const response = await fetch('https://algo-2-466c.onrender.com/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, discordId }),
@@ -46,7 +46,7 @@ function App() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/verify-otp', {
+      const response = await fetch('https://algo-2-466c.onrender.com/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, discordId }),
