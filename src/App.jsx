@@ -23,7 +23,7 @@ function App() {
     
     try {
          
-      const response = await fetch('https://algo-2lov.onrender.com/check-user', {
+      const response = await fetch('https://algo-rii0.onrender.com/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, discordId }),
@@ -35,7 +35,7 @@ function App() {
         setIsOtpSent(true);
         setShowInstructions(false); 
       } else if (data.message === 'Discord ID already linked.') {
-      setErrorMessage('Your Discord ID is already linked. <a href="https://discord.gg/g8EFTeE5" target="_blank" rel="noopener noreferrer">Join here</a> if you haven’t joined yet.');
+      setErrorMessage('Your Discord ID is already linked. <a href="https://algo-rii0.onrender.com/g8EFTeE5" target="_blank" rel="noopener noreferrer">Join here</a> if you haven’t joined yet.');
         setErrorType('link');
       } else if(data.message==='User not found') {
         setErrorMessage('Enter Registerd Email.');
@@ -51,7 +51,7 @@ function App() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://algo-2lov.onrender.com/verify-otp', {
+      const response = await fetch('http://localhost:3000/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, discordId }),
