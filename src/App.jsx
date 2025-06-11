@@ -79,7 +79,9 @@ function App() {
             <p style={{ marginTop: '10px', fontSize: '14px', color: 'gray' }}>
               Click 
               <FontAwesomeIcon icon={faCog} style={{ marginRight: '5px' }} />  beside your name.
+              <br/>
                Open the advanced option under **"App Settings"** and **ON "Developer Options"**.
+               <br/>
               Copy your Discord ID by clicking on userName;
 
               {/* Corrected clickable link */}
