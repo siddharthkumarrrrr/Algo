@@ -22,7 +22,7 @@ function App() {
      console.log("hii");
     try {
          
-      const response = await fetch('https://algo-2-466c.onrender.com/check-user', {
+      const response = await fetch('https://algo-8te2.onrender.com/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, discordId }),
@@ -47,7 +47,7 @@ function App() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://algo-2-466c.onrender.com/verify-otp', {
+      const response = await fetch('https://algo-8te2.onrender.com/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, discordId }),
