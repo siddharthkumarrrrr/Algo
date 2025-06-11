@@ -4,28 +4,31 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Client } from 'pg';
 import crypto from 'crypto';
+import axios from 'axios';
 import dotenv from 'dotenv';
+import { Client as DiscordClient, GatewayIntentBits } from 'discord.js';
 
-dotenv.config(); 
+dotenv.config();  // Load environment variables
 
+// Express app setup
 const app = express();
 const port = 3000;
-
 
 app.use(cors());
 app.use(bodyParser.json());
 
-
-const client = new Client({
+// PostgreSQL Client setup
+const dbClient = new Client({
   connectionString: process.env.DB_CONNECTION_STRING,
   ssl: { rejectUnauthorized: false },
 });
 
-
-client.connect()
+// Connect to the database
+dbClient.connect()
   .then(() => console.log('Connected to PostgreSQL database'))
   .catch((err) => console.error('Database connection error', err));
 
+// Nodemailer setup for sending OTP
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -34,16 +37,51 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Discord bot setup
+const discordClient = new DiscordClient({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+});
+
+
+discordClient.once('ready', () => {
+  console.log('Discord bot is ready!');
+});
+
+// Listen for new members joining the server
+discordClient.on('guildMemberAdd', async (member) => {
+  try {
+    const discordId = member.id;
+
+    // Check if the member's Discord ID exists in the database
+    const result = await dbClient.query('SELECT * FROM users WHERE discord_id = $1', [discordId]);
+
+    if (result.rows.length > 0) {
+      // If the Discord ID exists in the database, assign the "Premium Member" role
+      const role = member.guild.roles.cache.get(process.env.DISCORD_ROLE_ID);
+      if (role) {
+        await member.roles.add(role);
+        console.log(`Assigned Premium Member role to ${member.user.tag}`);
+      } else {
+        console.log('Role not found');
+      }
+    } else {
+      console.log(`User with Discord ID ${discordId} not found in database`);
+    }
+  } catch (error) {
+    console.error('Error adding member:', error);
+  }
+});
+
+
 app.post('/check-user', async (req, res) => {
-  
   const { email, discordId } = req.body;
 
   if (!email || !discordId) {
     return res.status(400).json({ message: 'Email and Discord ID are required' });
   }
- 
+
   try {
-    const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await dbClient.query('SELECT * FROM users WHERE email = $1', [email]);
 
     if (result.rows.length > 0) {
       const user = result.rows[0];
@@ -53,7 +91,8 @@ app.post('/check-user', async (req, res) => {
       } else {
         const otp = crypto.randomInt(100000, 999999).toString(); // Generate OTP
 
-        await client.query('UPDATE users SET otp = $1 WHERE email = $2', [otp, email]);
+        // Store OTP in database (not in memory)
+        await dbClient.query('UPDATE users SET otp = $1 WHERE email = $2', [otp, email]);
 
         const mailOptions = {
           from: process.env.EMAIL_USER,
@@ -84,21 +123,18 @@ app.post('/verify-otp', async (req, res) => {
   }
 
   try {
-    
-    const result = await client.query('SELECT * FROM users WHERE email = $1 AND otp = $2', [email, otp]);
+    const result = await dbClient.query('SELECT * FROM users WHERE email = $1 AND otp = $2', [email, otp]);
 
     if (result.rows.length > 0) {
-      
-      await client.query('UPDATE users SET discord_id = $1 WHERE email = $2', [discordId, email]);
+      await dbClient.query('UPDATE users SET discord_id = $1 WHERE email = $2', [discordId, email]);
 
-      
-      await client.query('UPDATE users SET otp = NULL WHERE email = $1', [email]);
+      const inviteLink = 'https://discord.gg/g8EFTeE5';  
+      res.status(200).json({ message: 'OTP verified successfully. Redirecting to Discord!', inviteLink });
 
-      res.status(200).json({ message: 'OTP verified successfully. Redirecting to Discord!' });
+      // Remove OTP from the database after successful verification
+      await dbClient.query('UPDATE users SET otp = NULL WHERE email = $1', [email]);
     } else {
-      
-      await client.query('UPDATE users SET otp = NULL WHERE email = $1', [email]);
-
+      await dbClient.query('UPDATE users SET otp = NULL WHERE email = $1', [email]);
       res.status(400).json({ message: 'Invalid OTP' });
     }
   } catch (error) {
@@ -107,6 +143,24 @@ app.post('/verify-otp', async (req, res) => {
   }
 });
 
+// Helper function to assign a role on Discord
+async function assignRoleToDiscordUser(discordId) {
+  const guildId = process.env.DISCORD_GUILD_ID;  // Your Discord server ID
+  const roleId = process.env.DISCORD_ROLE_ID;    // The role ID to assign
+
+  try {
+    const member = await discordClient.guilds.cache.get(guildId).members.fetch(discordId);
+    await member.roles.add(roleId);
+    console.log(`Role assigned to user: ${discordId}`);
+  } catch (error) {
+    console.error('Error assigning role:', error);
+  }
+}
+
+// Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+// Log the bot in
+discordClient.login(process.env.DISCORD_BOT_TOKEN);
