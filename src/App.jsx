@@ -11,6 +11,7 @@ function App() {
   const [isOtpSent, setIsOtpSent] = useState(false); 
   const [errorMessage, setErrorMessage] = useState('');
   const [showInstructions, setShowInstructions] = useState(true); 
+   const [errorType, setErrorType] = useState('');
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handleDiscordIdChange = (e) => setDiscordId(e.target.value);
@@ -19,10 +20,10 @@ function App() {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-     console.log("hii");
+    
     try {
          
-      const response = await fetch('https://algo-8te2.onrender.com/check-user', {
+      const response = await fetch('http://localhost:3000/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, discordId }),
@@ -34,12 +35,15 @@ function App() {
         setIsOtpSent(true);
         setShowInstructions(false); 
       } else if (data.message === 'Discord ID already linked.') {
-        setErrorMessage('Discord ID already linked.');
+      setErrorMessage('Your Discord ID is already linked. <a href="https://discord.gg/g8EFTeE5" target="_blank" rel="noopener noreferrer">Join here</a> if you haven’t joined yet.');
+        setErrorType('link');
       } else if(data.message==='User not found') {
         setErrorMessage('Enter Registerd Email.');
+        setErrorType('other');
       }
     } catch (error) {
       setErrorMessage('Backen issue.');
+      setErrorType('other');
     }
   };
 
@@ -47,7 +51,7 @@ function App() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://algo-8te2.onrender.com/verify-otp', {
+      const response = await fetch('https://localhost:300/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, discordId }),
@@ -59,9 +63,11 @@ function App() {
         window.location.href = data.inviteLink;  
       } else {
         setErrorMessage('Invalid OTP. Please try again.');
+        setErrorType('other');
       }
     } catch (error) {
       setErrorMessage('Error verifying OTP.');
+      setErrorType('other');
     }
   };
 
@@ -103,7 +109,12 @@ function App() {
         </>
       )}
 
-      {errorMessage && <p>{errorMessage}</p>}
+      {errorMessage && errorType === 'link' && (
+        <p dangerouslySetInnerHTML={{ __html: errorMessage }} />
+      )}
+      {errorMessage && errorType === 'other' && (
+        <p>{errorMessage}</p>
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ dotenv.config();  // Load environment variables
 
 // Express app setup
 const app = express();
-const port = 3000;
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -159,8 +159,8 @@ app.post('/verify-otp', async (req, res) => {
 
 // Helper function to assign a role on Discord
 async function assignRoleToDiscordUser(discordId) {
-  const guildId = process.env.DISCORD_GUILD_ID;  // Your Discord server ID
-  const roleId = process.env.DISCORD_ROLE_ID;    // The role ID to assign
+  const guildId = process.env.DISCORD_GUILD_ID;  
+  const roleId = process.env.DISCORD_ROLE_ID;    
 
   try {
     const member = await discordClient.guilds.cache.get(guildId).members.fetch(discordId);
@@ -171,9 +171,10 @@ async function assignRoleToDiscordUser(discordId) {
   }
 }
 
-// Start the server
+
+const port = process.env.PORT || 8000;  
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at ${port}`);
 });
 
 // Log the bot in
